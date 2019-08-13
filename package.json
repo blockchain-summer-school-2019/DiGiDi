@@ -6,7 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": [
+    {
+      "name": "Christian Handest",
+      "email": "lzp959@alumni.ku.dk"
+    },
+    {
+      "name": "Dominique Chancelier",
+      "email": "jnm450@alumni.ku.dk"
+    },
+    {
+      "name": "Niclas Kannengießer",
+      "email": "niclas.kannengiesser@kit.edu"
+    },
+    {
+      "name": "Rasmus",
+      "email": "m@mail.dk"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "^2.3.0",
