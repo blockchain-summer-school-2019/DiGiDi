@@ -1,0 +1,15 @@
+{
+  "name": "digidi",
+  "version": "1.0.0",
+  "description": "Blockchain Summer School 2019",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^2.3.0",
+    "drizzle": "^1.4.0"
+  }
+}
