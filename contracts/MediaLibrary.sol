@@ -53,42 +53,9 @@ contract MediaLibrary is ERC20 {
 
 
     // Add a new media file to the smart contract
-    function registerMedia(address artistAddress,
-        string name,
-        string metaDataHash,
-        uint8 day,
-        unit8 month,
-        uint
-        uint share,
-        bool approved,)
-    public returns(bool) {
-
-        // The artist uploading media files
-        Artist artist =  Artist(artistAddress, name);
-
-        MediaFile[] mediaFiles;
-
+    function registerMedia() public returns(bool) {
 
         // The media file being uploaded, downloaded, or streamed
-        struct MediaFile {
-            bytes32 id;
-            Artist artist;
-            string metaDataHash;
-            Date date;
-            uint share;
-            bool approved;
-        }
-
-        // A simple date structure
-        struct Date {
-        uint8 day;
-        uint month;
-        uint year;
-        }
-
-
-        mediaLibrary[numOfMediaFiles] = file;
-
         numOfMediaFiles = numOfMediaFiles.add(1);
 
         return true;
