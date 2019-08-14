@@ -1,55 +1,26 @@
-pragma solidity ^0.5.8;
-
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./MediaLibrary.sol";
 
 /*
-    The smart contract should fulfill all requirements of the ERC20 standard as required by the Drizzle Framework
+    Here
 */
-
-contract DiGiDiMarketPlace is ERC20 {
-    using SafeMath for uint256;
-
-    uint256 numOfMedia;
+contract DiGiDiMarketPlace is MediaLibrary {
 
     constructor() DiGiDiMarketPlace() public {
-        numOfMedia = 0;
+
     }
 
     /*
-        Returns the current number of media files orchestrated by the smart contract.
+        A user wants to stream a song
     */
-    function getNumOfMedia() public view returns(uint256) {
-        return numOfMedia;
-    }
-
-
-    /*
-        Add a new media file to the smart contract
-    */
-    function registerMedia() public returns(bool) {
-
-        numOfMedia = numOfMedia.add(1);
+    function requestMediaFileStream() public returns(bool) {
 
         return true;
     }
 
-
     /*
-        Remove an already registered media file from the smart contract registry
+        A user wants to stream a song
     */
-    function unregisterMedia() public returns(bool) {
-
-        numOfMedia = numOfMedia.sub(1);
-
-        return true;
-    }
-
-
-    /*
-        Request an retrieve a registered media file
-    */
-    function retrieveMediaFile() public pure returns(bool) {
+    function requestMediaFileDownload() public returns(bool) {
 
         return true;
     }
