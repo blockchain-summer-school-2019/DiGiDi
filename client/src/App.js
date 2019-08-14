@@ -1,10 +1,11 @@
 import React from 'react';
 import './App.css';
+import RegisterMediaFileComponent from "./components/RegisterMediaFileComponent";
 
 function App() {
   return (
     <div className="app">
-        This is DiGiDi!
+        <RegisterMediaFileComponent/>
     </div>
   );
 }

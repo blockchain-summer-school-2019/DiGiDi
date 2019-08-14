@@ -9,26 +9,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MediaLibrary is ERC20 {
 
-    struct Date {
-        uint8 day;
-        uint month;
-        uint year;
-    }
-
-    struct User {
-        string firstname;
-        string lastname;
-        unint256 listenCounter;
-    }
-
+    // The artist uploading media files
     struct Artist {
         address artist;
         string name;
         MediaFile[] mediaFiles;
     }
 
+
+    // The media file being uploaded, downloaded, or streamed
     struct MediaFile {
-        byte32 id;
+        bytes32 id;
         Artist artist;
         string metaDataHash;
         Date date;
@@ -36,29 +27,67 @@ contract MediaLibrary is ERC20 {
         bool approved;
     }
 
+    // A simple date structure
+    struct Date {
+        uint8 day;
+        uint month;
+        uint year;
+    }
 
-    uint256 numOfMedia;         // Number of media files
+
+
+    uint256 numOfMediaFiles;    // Number of media files
     address payable owner;      // Person, who deployed this smart contract
 
-    mappging(address, );
+    MediaFile[] mediaLibrary;
 
     constructor() public {
         owner = msg.sender;
         numOfMediaFiles = 0;
     }
 
-    /*
-    Returns the current number of media files orchestrated by the smart contract.
-    */
+    //Returns the current number of media files orchestrated by the smart contract
     function getNumOfMedia() public view returns(uint256) {
         return numOfMediaFiles;
     }
 
 
-    /*
-        Add a new media file to the smart contract
-    */
-    function registerMedia() public returns(bool) {
+    // Add a new media file to the smart contract
+    function registerMedia(address artistAddress,
+        string name,
+        string metaDataHash,
+        uint8 day,
+        unit8 month,
+        uint
+        uint share,
+        bool approved,)
+    public returns(bool) {
+
+        // The artist uploading media files
+        Artist artist =  Artist(artistAddress, name);
+
+        MediaFile[] mediaFiles;
+
+
+        // The media file being uploaded, downloaded, or streamed
+        struct MediaFile {
+            bytes32 id;
+            Artist artist;
+            string metaDataHash;
+            Date date;
+            uint share;
+            bool approved;
+        }
+
+        // A simple date structure
+        struct Date {
+        uint8 day;
+        uint month;
+        uint year;
+        }
+
+
+        mediaLibrary[numOfMediaFiles] = file;
 
         numOfMediaFiles = numOfMediaFiles.add(1);
 
@@ -66,9 +95,7 @@ contract MediaLibrary is ERC20 {
     }
 
 
-    /*
-        Update a registered media file
-    */
+    // Update a registered media file
     function updateMediaFile() public returns(bool) {
 
 
@@ -77,9 +104,7 @@ contract MediaLibrary is ERC20 {
     }
 
 
-    /*
-        Remove an already registered media file from the smart contract registry
-    */
+    // Remove an already registered media file from the smart contract registry
     function unregisterMedia() public returns(bool) {
 
 
@@ -91,18 +116,14 @@ contract MediaLibrary is ERC20 {
     }
 
 
-    /*
-        Request an retrieve a registered media file
-    */
+    // Request an retrieve a registered media file
     function retrieveMediaFile() public pure returns(bool) {
 
         return true;
     }
 
 
-    /*
-        Approve a registered media file
-    */
+    // Approve a registered media file
     function approveMediaFile(
 
     ) public returns(bool) {
