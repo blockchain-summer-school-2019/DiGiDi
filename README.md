@@ -11,5 +11,5 @@ Interact with your contract using:
 
     let instance = await DiGiDiMarketPlace.deployed()
     let oldNumOfMediaFiles = instance.getNumOfMediaFiles()
+    instance.registerMediaFile("Hello Joe")
     instance.getNumOfMediaFiles()
-    instance.registerMediaFile("Hello Joe", "Jimi Hendrix", "asdadas", 14, 8, 2019, 100)

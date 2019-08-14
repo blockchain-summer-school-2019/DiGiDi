@@ -31,4 +31,34 @@ contract("DiGiDiMarketPlace", accounts => {
                 */
             });
     });
+
+    it("payment testing", () => {
+        const account_one = accounts[1];
+        const account_two = accounts[2];
+
+        return DiGiDiMarketPlace.deployed()
+            .then(instance => {
+
+                // Test data
+                let trackId = "my file as a string";
+
+                instance.registerMediaFile.call(trackId);
+                return instance.getNumOfMediaFiles.call();
+            })
+            .then(numOfMediaFiles => {
+
+                // ToDo: Cast to same BigInt
+                /*
+                let expectedVal = BigInt(1);
+                let actualVal = numOfMediaFiles;
+
+                assert.equals(
+                    expectedVal,
+                    actualVal,
+                    "something went wrong during the registration."
+                );
+                */
+            });
+    });
+
 });

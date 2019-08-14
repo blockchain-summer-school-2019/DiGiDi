@@ -10,9 +10,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract MediaLibrary is ERC20 {
     using SafeMath for uint256;
 
+    struct Shares {
+        address sharehodler;
+        uint8 share;
+    }
+
     struct  MediaFile {
         address artist;
         bool approved;
+        uint8 price;
+        //Shares[] shareholders;
     }
 
     mapping(bytes32 => MediaFile) mediaLibrary;
@@ -36,7 +43,8 @@ contract MediaLibrary is ERC20 {
     function registerMediaFile(string memory mediaFile) public returns(bool) {
 
         bytes32 mediaFileHash = stringToBytes32(mediaFile);
-        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false);
+
+        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false, 100);
 
         // The media file being uploaded, downloaded, or streamed
         numOfMediaFiles = numOfMediaFiles.add(1);
@@ -53,7 +61,9 @@ contract MediaLibrary is ERC20 {
 
         if(mediaLibrary[oldFileHash].artist  == msg.sender) {
             delete mediaLibrary[oldFileHash];
-            mediaLibrary[newFileHash] = MediaFile(msg.sender, false);
+
+
+            mediaLibrary[newFileHash] = MediaFile(msg.sender, false, 100);
         }
 
         return true;
