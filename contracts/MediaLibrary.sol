@@ -8,38 +8,18 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 */
 
 contract MediaLibrary is ERC20 {
+    using SafeMath for uint256;
 
-    // The artist uploading media files
-    struct Artist {
+    struct  MediaFile {
         address artist;
-        string name;
-        MediaFile[] mediaFiles;
-    }
-
-
-    // The media file being uploaded, downloaded, or streamed
-    struct MediaFile {
-        bytes32 id;
-        Artist artist;
-        string metaDataHash;
-        Date date;
-        uint share;
         bool approved;
     }
 
-    // A simple date structure
-    struct Date {
-        uint8 day;
-        uint month;
-        uint year;
-    }
-
+    mapping(bytes32 => MediaFile) mediaLibrary;
 
 
     uint256 numOfMediaFiles;    // Number of media files
     address payable owner;      // Person, who deployed this smart contract
-
-    MediaFile[] mediaLibrary;
 
     constructor() public {
         owner = msg.sender;
@@ -47,13 +27,16 @@ contract MediaLibrary is ERC20 {
     }
 
     //Returns the current number of media files orchestrated by the smart contract
-    function getNumOfMedia() public view returns(uint256) {
+    function getNumOfMediaFiles() public view returns(uint256) {
         return numOfMediaFiles;
     }
 
 
     // Add a new media file to the smart contract
-    function registerMedia() public returns(bool) {
+    function registerMediaFile(string memory mediaFile) public returns(bool) {
+
+        bytes32 mediaFileHash = stringToBytes32(mediaFile);
+        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false);
 
         // The media file being uploaded, downloaded, or streamed
         numOfMediaFiles = numOfMediaFiles.add(1);
@@ -63,39 +46,65 @@ contract MediaLibrary is ERC20 {
 
 
     // Update a registered media file
-    function updateMediaFile() public returns(bool) {
+    function updateMediaFile(string memory oldFile, string memory newFile) public returns(bool) {
 
+        bytes32 oldFileHash = stringToBytes32(oldFile);
+        bytes32 newFileHash = stringToBytes32(newFile);
 
+        if(mediaLibrary[oldFileHash].artist  == msg.sender) {
+            delete mediaLibrary[oldFileHash];
+            mediaLibrary[newFileHash] = MediaFile(msg.sender, false);
+        }
 
         return true;
     }
 
 
     // Remove an already registered media file from the smart contract registry
-    function unregisterMedia() public returns(bool) {
+    // ToDo: modifier owner == tx.sender
+    function unregisterMediaFile(bytes32 trackId) public returns(bool) {
 
-
-
-
+        delete mediaLibrary[trackId];
         numOfMediaFiles = numOfMediaFiles.sub(1);
 
         return true;
     }
 
+    // Request an registered media file hash and artist
+    function retrieveMediaFileArtist(string memory trackId) public view returns(address) {
 
-    // Request an retrieve a registered media file
-    function retrieveMediaFile() public pure returns(bool) {
+        MediaFile memory mediaFile = mediaLibrary[stringToBytes32(trackId)];
 
-        return true;
+        return mediaFile.artist;
     }
 
 
     // Approve a registered media file
-    function approveMediaFile(
-
-    ) public returns(bool) {
+    function approveMediaFile(bool approved, string memory trackId) public view returns(bool) {
+        MediaFile memory file = mediaLibrary[stringToBytes32(trackId)];
+        file.approved = approved;
 
         return true;
+    }
+
+    // Helper function hashing
+    function createTrackId(address artist) private pure returns(bytes32) {
+        uint256 _unixTimestamp;
+        uint256 _timeExpired;
+
+        return keccak256(abi.encodePacked(artist, _unixTimestamp, _timeExpired));
+    }
+
+    // Convert string to bytes32
+    function stringToBytes32(string memory source) private pure returns(bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 
 }

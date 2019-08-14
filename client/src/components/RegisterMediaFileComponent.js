@@ -11,7 +11,7 @@ class RegisterMediaFileComponent extends React.Component {
         };
     }
 
-    registerMediaFile = () => {
+    registerNewMediaFile = () => {
         this.setState({firstName : "Billy", lastName : "Joel"});
     };
 
@@ -22,7 +22,7 @@ class RegisterMediaFileComponent extends React.Component {
                     <p>Dear <i>{this.state.firstName} {this.state.lastName}</i>,<br /> please register your latest track!</p>
                     <label>Title</label>
                     <input name={"fileName"}/>
-                    <button type={"button"} onClick={this.registerMediaFile} value={"upload"} />
+                    <button type={"button"} onClick={this.registerNewMediaFile} value={"upload"} />
                 </form>
                 This is a login form
             </div>

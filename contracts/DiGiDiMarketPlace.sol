@@ -19,13 +19,13 @@ contract DiGiDiMarketPlace is MediaLibrary {
     }
 
     // A user wants to stream a song
-    function requestMediaFileStream() public returns(bool) {
+    function requestMediaFileStream() public pure returns(bool) {
 
         return true;
     }
 
     // A user wants to stream a song
-    function requestMediaFileDownload() public returns(bool) {
+    function requestMediaFileDownload() public pure returns(bool) {
 
         return true;
     }
