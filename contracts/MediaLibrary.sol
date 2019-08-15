@@ -1,4 +1,4 @@
-pragma solidity ^0.5.8;
+pragma solidity ^0.5.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -38,11 +38,12 @@ contract MediaLibrary is ERC20 {
     }
 
 
-    // Add a new media file to the smart contract
-    function registerMediaFile(string memory mediaFile, uint8 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bytes32) {
-        require(shareholders.length == shares.length, "Shareholders and shares are not of the same length");
+    event MediaIDEvent(bytes32);
 
-        bytes32 mediaId = stringToBytes32(mediaFile);
+
+    // Add a new media file to the smart contract
+    function registerMediaFile(bytes32 mediaId, uint8 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bool) {
+        require(shareholders.length == shares.length, "Shareholders and shares are not of the same length");
 
         mediaLibrary[mediaId] = MediaFile(msg.sender, false, price, ipfsAddress);
 
@@ -55,7 +56,9 @@ contract MediaLibrary is ERC20 {
         // The media file being uploaded, downloaded, or streamed
         numOfMediaFiles = numOfMediaFiles.add(1);
 
-        return mediaId;
+        emit MediaIDEvent(mediaId);
+
+        return true;
     }
 
     //Returns the current number of media files orchestrated by the smart contract
@@ -64,9 +67,7 @@ contract MediaLibrary is ERC20 {
     }
 
     // Update a registered media file
-    function updateMediaFile(string memory oldFile, string memory newFile, uint8 newPrice, string memory ipfsArray) public returns(bool) {
-        bytes32 oldFileHash = stringToBytes32(oldFile);
-        bytes32 newFileHash = stringToBytes32(newFile);
+    function updateMediaFile(bytes32 oldFileHash, bytes32 newFileHash, uint8 newPrice, string memory ipfsArray) public returns(bool) {
 
         if(mediaLibrary[oldFileHash].artist  == msg.sender) {
             delete mediaLibrary[oldFileHash];
@@ -111,14 +112,6 @@ contract MediaLibrary is ERC20 {
     /**
       Below, there are helper functions for the conversion of data types
     */
-
-    // Helper function hashing
-    function createTrackId(address artist) private pure returns(bytes32) {
-        uint256 _unixTimestamp;
-        uint256 _timeExpired;
-
-        return keccak256(abi.encodePacked(artist, _unixTimestamp, _timeExpired));
-    }
 
     // Convert string to bytes32
     function stringToBytes32(string memory source) public pure returns(bytes32 result) {

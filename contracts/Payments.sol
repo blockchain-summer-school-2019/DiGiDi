@@ -28,9 +28,11 @@ contract Payments is MediaLibrary {
     }
 
     // Payout to the msg.sender if they are owe some ether
-    function requestPayment(address usr) public returns(bool) {
-        owed[usr] = 0;
-        msg.sender.transfer(owed[usr]);
+    function requestPayment() public returns(bool) {
+        uint256 amounts = owed[msg.sender];
+        owed[msg.sender] = 0;
+
+        msg.sender.transfer(amounts);
 
         return true;
     }
@@ -45,6 +47,7 @@ contract Payments is MediaLibrary {
     }
 
     // Whenever a MediaFile is purchased, we update the amount owed
+    // Using safeIndexOwed to get along with potential out of gas exceptions
     function updateOwed(bytes32 mediaID) internal returns(bool) {
 
         for (uint i=safeIndexOwed; i<shareholderLibrary[mediaID].length; i++) {
