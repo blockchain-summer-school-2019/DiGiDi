@@ -125,4 +125,8 @@ contract MediaLibrary is ERC20 {
         }
     }
 
+    function getPrice(bytes32 mediaId) public returns (uint256){
+        return mediaLibrary[mediaId].price;
+    }
+
 }
