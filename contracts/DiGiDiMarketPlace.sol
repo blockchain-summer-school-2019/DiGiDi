@@ -14,9 +14,15 @@ contract DiGiDiMarketPlace is Payments {
     //ToDo: Connect to IPFS
     string constant TEMPORARY_IPFS_ADDRESS = "asdadas";
 
+
+    constructor() public {
+
+        approverMap[msg.sender] = true;
+    }
+
+
     // Manages that a user is able to retrieve a media file
     function requestMediaFileStream(bytes32 mediaId) public payable returns(bool) {
-
         // The price of the song
         uint256 price = getPrice(mediaId);
 
@@ -25,10 +31,9 @@ contract DiGiDiMarketPlace is Payments {
         // Make sure the msg had enough ether
         require(price <= msg.value, "Not enough funds sent");
 
+        require(mediaLibrary[mediaId].approved || approverMap[msg.sender], "You are not permitted to access this file");
 
-        //require(checkAccessToMediaFile(mediaId) == true, "You are not permitted to access this file");
-
-        //Update the balance of all stakeholders
+        // Update the balance of all stakeholders
         updateOwed(mediaId);
 
         // Pay back change
@@ -44,26 +49,4 @@ contract DiGiDiMarketPlace is Payments {
         emit GetMediaFilePriceEvent(mediaLibrary[mediaId].price);
         return mediaLibrary[mediaId].price;
     }
-
-//    function pay(bytes32 mediaId) payable public returns(bool){
-//
-//
-//        // The price of the song
-//        uint256 price = getPrice(mediaId);
-//
-//        require(price > 0, "Media has no price");
-//
-//        // Make sure the msg had enough ether
-//        require(price <= msg.value, "Not enough funds sent");
-//
-//        // Make sure shareholders are paid
-//        updateOwed(mediaId);
-//
-//        // Pay back change
-//        uint256 change = msg.value.sub(price);
-//
-//        msg.sender.transfer(remittance);
-//        return true;
-//    }
-
 }

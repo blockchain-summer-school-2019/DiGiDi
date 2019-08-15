@@ -25,8 +25,7 @@ contract MediaLibrary is ERC20 {
 
     mapping(bytes32 => MediaFile) mediaLibrary;
     mapping(bytes32 => Share[]) shareholderLibrary;
-
-    mapping(address => bool) approverIDs;
+    mapping(address => bool) approverMap;
 
 
     uint256 numOfMediaFiles;    // Number of media files
@@ -111,14 +110,16 @@ contract MediaLibrary is ERC20 {
     function checkAccessToMediaFile(string memory trackId) private view returns (bool) {
         MediaFile memory mediaFile = mediaLibrary[stringToBytes32(trackId)];
 
-        if(mediaFile.approved == true || approverIDs[msg.sender])
+        if(mediaFile.approved == true || approverMap[msg.sender])
             return true;
 
         return false;
     }
 
     // Approve a registered media file
-    function approveMediaFile(bool approved, string memory trackId) public view returns(bool) {
+    function approveMediaFile(string memory trackId, bool approved) public view returns(bool) {
+        require(approverMap[msg.sender], "Not allowed to approve the media file");
+
         MediaFile memory file = mediaLibrary[stringToBytes32(trackId)];
         file.approved = approved;
 
@@ -140,5 +141,13 @@ contract MediaLibrary is ERC20 {
         assembly {
             result := mload(add(source, 32))
         }
+    }
+
+    // Set or revoke the permission to approve songs
+    function updateApprover(address usr, bool permission) public returns(bool) {
+        if(approverMap[msg.sender] && usr != owner)
+            approverMap[usr] = permission;
+
+        return true;
     }
 }

@@ -28,24 +28,39 @@ contract("DiGiDiMarketPlace", accounts => {
         actualVal.should.be.a.bignumber.that.equals("1");
     });
 
-
     it("Request media file",  async () => {
         const digidi = await DiGiDiMarketPlace.new();
 
         let file = "my-file-as-a-string";
         let mediaId = web3.utils.sha3(file);
 
+        let oldBalanceAccount0 = await web3.eth.getBalance(accounts[0]);
+        let oldBalanceAccount1 = await web3.eth.getBalance(accounts[1]);
+        let oldBalanceAccount2 = await web3.eth.getBalance(accounts[2]);
+
         await digidi.registerMediaFile(mediaId, web3.utils.toWei("2"), "IPFS address", [accountOne, accountTwo], [3, 3]);
+
+        // Add an approver
+        await digidi.updateApprover(accounts[1], true);
+
+        // Approve media file
+        await digidi.approveMediaFile(mediaId, true);
+
         await digidi.requestMediaFileStream(mediaId, {value:web3.utils.toWei("3")});
 
-        digidi.requestPayment();
+        //Get Payments
+        await digidi.requestPayment({from:accounts[1]});
+        let newBalanceAccount0 = await web3.eth.getBalance(accounts[0]);
 
+        await digidi.requestPayment({from:accounts[2]});
+        let newBalanceAccount1 = await web3.eth.getBalance(accounts[1]);
 
-        // use getBalance
-        /*
-        assert.equal(balanceAccountTwo, 100000000000000000000, "The balance was not updated for accountTwo");
-        assert.equal(balanceAccountThree, 100000000000000000000, "The balance was not updated for accountThree");
-        */
+        await digidi.requestPayment({from:accounts[3]});
+        let newBalanceAccount2 = await web3.eth.getBalance(accounts[2]);
+
+        assert(newBalanceAccount1 > oldBalanceAccount1, "The balance was not updated for accountTwo");
+        assert(newBalanceAccount2 > oldBalanceAccount2, "The balance was not updated for accountThree");
+
     });
 
 });
