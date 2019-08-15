@@ -1,64 +1,34 @@
+const MediaLibrary = artifacts.require("MediaLibrary");
 const DiGiDiMarketPlace = artifacts.require("DiGiDiMarketPlace");
+
+const chai = require('chai');
+const BN = require('bn.js');
+
+chai.should();
+chai.use(require('chai-bn')(BN));
+
 
 contract("DiGiDiMarketPlace", accounts => {
 
-    it("get the number of registered media files", () => {
+    it("get the number of registered media files", async () => {
+        const digidi = await MediaLibrary.new();
 
-        const account_one = accounts[0];
-        const account_two = accounts[1];
+        let actualVal = await digidi.getNumOfMediaFiles();
+        actualVal.should.be.a.bignumber.that.equals("0");
 
-        return DiGiDiMarketPlace.deployed()
-            .then(instance => {
 
-                // Test data
-                let trackId = "my file as a string";
+        let trackId = "my file as a string";
+        await digidi.registerMediaFile(trackId);
 
-                instance.registerMediaFile.call(trackId);
-                return instance.getNumOfMediaFiles.call();
-            })
-            .then(numOfMediaFiles => {
 
-                // ToDo: Cast to same BigInt
-                /*
-                let expectedVal = BigInt(1);
-                let actualVal = numOfMediaFiles;
-
-                assert.equals(
-                    expectedVal,
-                    actualVal,
-                    "something went wrong during the registration."
-                );
-                */
-            });
+        actualVal = await digidi.getNumOfMediaFiles();
+        actualVal.should.be.a.bignumber.that.equals("1");
     });
 
     it("payment testing", () => {
         const account_one = accounts[1];
         const account_two = accounts[2];
 
-        return DiGiDiMarketPlace.deployed()
-            .then(instance => {
-
-                // Test data
-                let trackId = "my file as a string";
-
-                instance.registerMediaFile.call(trackId);
-                return instance.getNumOfMediaFiles.call();
-            })
-            .then(numOfMediaFiles => {
-
-                // ToDo: Cast to same BigInt
-                /*
-                let expectedVal = BigInt(1);
-                let actualVal = numOfMediaFiles;
-
-                assert.equals(
-                    expectedVal,
-                    actualVal,
-                    "something went wrong during the registration."
-                );
-                */
-            });
     });
 
 });
