@@ -18,7 +18,7 @@ contract("DiGiDiMarketPlace", accounts => {
 
 
         let trackId = "my file as a string";
-        await digidi.registerMediaFile(trackId);
+        await digidi.registerMediaFile(trackId, 2, "IPFS address");
 
 
         actualVal = await digidi.getNumOfMediaFiles();

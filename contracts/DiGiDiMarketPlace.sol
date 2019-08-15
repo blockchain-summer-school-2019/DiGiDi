@@ -1,38 +1,62 @@
 pragma solidity ^0.5.8;
 
 import "./MediaLibrary.sol";
+import "./Payments.sol";
 
 /*
     The market place
 */
-contract DiGiDiMarketPlace {
+contract DiGiDiMarketPlace is MediaLibrary {
 
-    // The end user streaming music
-    struct User {
-        address user;
-        uint256 listenCounter;
-    }
+    Payments payments;
 
-    MediaLibrary mL;
+    // Manages that a user is able to retrieve a media file
+    function requestMediaFileStream(string memory mediaId) public view returns(bytes32, bytes32) {
 
-    constructor() public {
+        /**
+        require(checkAccessToMediaFile(mediaId), "You are not permitted to access this file");
 
-    }
+        //Check if the file exists
+        MediaFile memory file = mediaLibrary[stringToBytes32(trackId)];
 
-    function setMediaLibrary(address mLAddress) public {
-        mL = MediaLibrary(mLAddress);
-    }
+        //Check if the user has enough balance to pay the media file
+        payments.getBalance(tx.sender);
 
-    // A user wants to stream a song
-    function requestMediaFileStream(string memory mediaId) public view returns(bool) {
-        mL.retrieveMediaFile(mediaId);
+        //Get all stakeholders and their shares
+        //Shareholder[] sh = ..
 
-        return true;
+        //Update the balance of all stakeholders
+        payments.updateOwed();
+        */
+        bytes32 ipfsAddress1 = "asdadas";
+        bytes32 ipfsAddress2 = "asdadas";
+
+
+        return (ipfsAddress1, ipfsAddress2);
     }
 
     // A user wants to stream a song
     function requestMediaFileDownload() public pure returns(bool) {
 
+        return true;
+    }
+
+    //Get balance
+    function getBalance() public returns(uint128) {
+        return payments.getBalance(msg.sender);
+    }
+
+    // Request payment
+    function requestPayment() public returns(bool) {
+        return payments.requestPayment(msg.sender);
+    }
+
+
+
+    // Set the address of the payment contract
+    function setPaymentsAddress(address t) public returns(bool) {
+        require(msg.sender == owner, "You are not the owner");
+        payments = Payments(t);
         return true;
     }
 }

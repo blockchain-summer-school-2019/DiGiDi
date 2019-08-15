@@ -10,62 +10,50 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/payment/PullPayment.sol";
 import "./MediaLibrary.sol";
 
-contract Payments{
-
+contract Payments {
     using SafeMath for uint256;
-    uint safeIndex;
+
+    uint safeIndexOwed = 0;
     address payable owner;
 
-    // The map of tokens/money owed.
-    // The address is the address of the shareholders, and the money owed to them
-    mapping (address => uint8) owed;
-
-    // We currently request payments upfront, so the user/listener of music has a balance
-    mapping (address => uint8) userBalances;
+    /**
+        The map of tokens/money owed.
+        The address is the address of the shareholders, and the money owed to them
+        All values are calculated in Finney because of the insufficient decimal calculation of Solidity
+    */
+    mapping (address => uint128) owed;
 
     constructor() public {
         owner = msg.sender;
     }
 
     // Payout to the msg.sender if they are owe some ether
-    function requestPayment() public {
-        require(owed[msg.sender] > 0, "You are not owed anything");
-        msg.sender.send(owed[msg.sender]);
-        owed[msg.sender] = 0;
+    function requestPayment(address usr) public returns(bool) {
+        require(owed[usr] > 0, "You are not owed anything");
+
+        owed[usr] = 0;
+        msg.sender.transfer(owed[usr]);
+
+        return true;
     }
 
     // Lets the msg.sender know their balance
-    function getBalance() external returns (uint8) {
+    function getBalance(address usr) external returns (uint128) {
         // require(owed[msg.sender] > 0, "You are not owed anything");
-        return owed[msg.sender];
+        return owed[usr];
     }
 
 
     // Whenever a MediaFile is purchased, we update the amount owed
-    function updateOwed(MediaLibrary.MediaFile mediaFile) external {
-        shareholders = mediaFile.shareholders;
-
-        for (uint i=safeIndex; i<shareholders.length; i++) {
-
-            address currentShareholder = shareholders[i].shareholder;
-
-            // There might be some problems with the rounding and stuff
-            uint256 amountToShareholder_i = shareRatios[i] * price;
-
-            owed[currentShareholder] += amountToShareholder_i;
-            safeIndex = i;
-        }
-
-        safeIndex = 0;
-    }
-
-    // Receives user payment and update user balances
-    function () payable {
-        userBalances[msg.sender] += msg.value;
+    function updateOwed(address shareholder, uint8 amount) external returns(bool) {
+        owed[shareholder] += amount;
+        return true;
     }
 
     // Check if the user has sufficient funds
-    function enoughFunds(address user, MediaLibrary.MediaFile mediaF) {
+    function enoughFunds(address usr, uint8 price) public returns(bool) {
         //todo
+
+        return true;
     }
 }

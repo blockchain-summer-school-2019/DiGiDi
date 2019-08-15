@@ -10,8 +10,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract MediaLibrary is ERC20 {
     using SafeMath for uint256;
 
+    // The share represents the divisor
     struct Shares {
-        address sharehodler;
+        address shareholder;
         uint8 share;
     }
 
@@ -19,10 +20,13 @@ contract MediaLibrary is ERC20 {
         address artist;
         bool approved;
         uint8 price;
+        string ipfsAddress;
         //Shares[] shareholders;
     }
 
     mapping(bytes32 => MediaFile) mediaLibrary;
+
+    mapping(address => bool) approverIDs;
 
 
     uint256 numOfMediaFiles;    // Number of media files
@@ -35,10 +39,10 @@ contract MediaLibrary is ERC20 {
 
 
     // Add a new media file to the smart contract
-    function registerMediaFile(string memory mediaFile) public returns(bool) {
+    function registerMediaFile(string memory mediaFile, uint8 price, string memory ipfsAddress) public returns(bool) {
         bytes32 mediaFileHash = stringToBytes32(mediaFile);
 
-        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false, 100);
+        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false, 100, ipfsAddress);
 
         // The media file being uploaded, downloaded, or streamed
         numOfMediaFiles = numOfMediaFiles.add(1);
@@ -52,14 +56,14 @@ contract MediaLibrary is ERC20 {
     }
 
     // Update a registered media file
-    function updateMediaFile(string memory oldFile, string memory newFile) public returns(bool) {
+    function updateMediaFile(string memory oldFile, string memory newFile, uint8 newPrice, string memory ipfsArray) public returns(bool) {
         bytes32 oldFileHash = stringToBytes32(oldFile);
         bytes32 newFileHash = stringToBytes32(newFile);
 
         if(mediaLibrary[oldFileHash].artist  == msg.sender) {
             delete mediaLibrary[oldFileHash];
 
-            mediaLibrary[newFileHash] = MediaFile(msg.sender, false, 100);
+            mediaLibrary[newFileHash] = MediaFile(msg.sender, false, 100, ipfsArray);
         }
 
         return true;
@@ -78,10 +82,13 @@ contract MediaLibrary is ERC20 {
 
 
     // Request an registered media file hash and artist
-    function retrieveMediaFile(string memory trackId) public view returns (address, bool, uint8) {
+    function checkAccessToMediaFile(string memory trackId) private view returns (bool) {
         MediaFile memory mediaFile = mediaLibrary[stringToBytes32(trackId)];
 
-        return (mediaFile.artist, mediaFile.approved, mediaFile.price);
+        if(mediaFile.approved == true || approverIDs[msg.sender])
+            return true;
+
+        return false;
     }
 
     // Approve a registered media file
