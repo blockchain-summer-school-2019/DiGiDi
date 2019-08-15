@@ -42,14 +42,25 @@ contract MediaLibrary is ERC20 {
 
 
     // Add a new media file to the smart contract
-    function registerMediaFile(bytes32 mediaId, uint8 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bool) {
+    function registerMediaFile(bytes32 mediaId, uint256 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bool) {
         require(shareholders.length == shares.length, "Shareholders and shares are not of the same length");
 
         mediaLibrary[mediaId] = MediaFile(msg.sender, false, price, ipfsAddress);
 
+        bool artistIncluded = false;
 
         for(uint8 i=0; i < shareholders.length; i++) {
             Share memory s = Share(shareholders[i], shares[i]);
+            shareholderLibrary[mediaId].push(s);
+
+            if(shareholders[i] == msg.sender)
+                artistIncluded = true;
+        }
+
+        // If the artist is not already included in the shareholder set, add her
+        if(!artistIncluded) {
+            uint8 c = calculateRestShare();
+            Share memory s = Share(msg.sender, c);
             shareholderLibrary[mediaId].push(s);
         }
 
@@ -59,6 +70,12 @@ contract MediaLibrary is ERC20 {
         emit MediaIDEvent(mediaId);
 
         return true;
+    }
+
+    // ToDo:
+    function calculateRestShare() internal pure returns(uint8) {
+        uint8 x = 3;
+        return x;
     }
 
     //Returns the current number of media files orchestrated by the smart contract
@@ -124,9 +141,4 @@ contract MediaLibrary is ERC20 {
             result := mload(add(source, 32))
         }
     }
-
-    function getPrice(bytes32 mediaId) public returns (uint256){
-        return mediaLibrary[mediaId].price;
-    }
-
 }

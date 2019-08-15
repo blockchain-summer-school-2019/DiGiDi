@@ -50,6 +50,8 @@ contract Payments is MediaLibrary {
     // Using safeIndexOwed to get along with potential out of gas exceptions
     function updateOwed(bytes32 mediaID) internal returns(bool) {
 
+        uint8 numOfShares = 0;
+
         for (uint i=safeIndexOwed; i<shareholderLibrary[mediaID].length; i++) {
             Share memory currentShare = shareholderLibrary[mediaID][i];
 
@@ -58,9 +60,12 @@ contract Payments is MediaLibrary {
             owed[currentShare.shareholder] += amountToShareholder_i;
 
             safeIndexOwed.add(1);
+
+            numOfShares = numOfShares+1;
         }
 
         safeIndexOwed = 0;
+
 
         return true;
     }
