@@ -17,7 +17,6 @@ contract("Payments", accounts => {
         const digidi = await DiGiDiMarketPlace.new();
         const payment = await Payments.new();
 
-        let actualVal = await payment.getBalance(accountOne);
         //assert.equal(actualVal, 0, "The account was already charged");
     });
 

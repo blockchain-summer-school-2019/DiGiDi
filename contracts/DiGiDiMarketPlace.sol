@@ -1,38 +1,39 @@
 pragma solidity ^0.5.8;
 
-import "./MediaLibrary.sol";
 import "./Payments.sol";
 
 /*
     The market place
 */
-contract DiGiDiMarketPlace is MediaLibrary {
+contract DiGiDiMarketPlace is Payments {
 
-    Payments payments;
+    event _IPFSAddress(string);
 
     // Manages that a user is able to retrieve a media file
-    function requestMediaFileStream(string memory mediaId) public view returns(bytes32, bytes32) {
+    function requestMediaFileStream(string memory id) public payable returns(bool) {
+        //require(checkAccessToMediaFile(mediaId) == true, "You are not permitted to access this file");
 
-        /**
-        require(checkAccessToMediaFile(mediaId), "You are not permitted to access this file");
+        bytes32 mediaId = stringToBytes32(id);
 
         //Check if the file exists
-        MediaFile memory file = mediaLibrary[stringToBytes32(trackId)];
+        //ToDo: Check for null pointer
+        MediaFile memory file = mediaLibrary[mediaId];
 
         //Check if the user has enough balance to pay the media file
-        payments.getBalance(tx.sender);
+        getUserBalance(msg.sender);
 
         //Get all stakeholders and their shares
         //Shareholder[] sh = ..
 
         //Update the balance of all stakeholders
-        payments.updateOwed();
-        */
-        bytes32 ipfsAddress1 = "asdadas";
-        bytes32 ipfsAddress2 = "asdadas";
+        updateOwed(mediaId);
 
+        //ToDo: Connect to IPFS
+        string memory ipfsAddress = "asdadas";
 
-        return (ipfsAddress1, ipfsAddress2);
+        emit _IPFSAddress(ipfsAddress);
+
+        return true;
     }
 
     // A user wants to stream a song
@@ -41,22 +42,9 @@ contract DiGiDiMarketPlace is MediaLibrary {
         return true;
     }
 
-    //Get balance
-    function getBalance() public returns(uint128) {
-        return payments.getBalance(msg.sender);
-    }
-
     // Request payment
     function requestPayment() public returns(bool) {
-        return payments.requestPayment(msg.sender);
+        return requestPayment(msg.sender);
     }
 
-
-
-    // Set the address of the payment contract
-    function setPaymentsAddress(address t) public returns(bool) {
-        require(msg.sender == owner, "You are not the owner");
-        payments = Payments(t);
-        return true;
-    }
 }

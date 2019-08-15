@@ -11,7 +11,7 @@ contract MediaLibrary is ERC20 {
     using SafeMath for uint256;
 
     // The share represents the divisor
-    struct Shares {
+    struct Share {
         address shareholder;
         uint8 share;
     }
@@ -19,12 +19,12 @@ contract MediaLibrary is ERC20 {
     struct  MediaFile {
         address artist;
         bool approved;
-        uint8 price;
+        uint256 price;
         string ipfsAddress;
-        //Shares[] shareholders;
     }
 
     mapping(bytes32 => MediaFile) mediaLibrary;
+    mapping(bytes32 => Share[]) shareholderLibrary;
 
     mapping(address => bool) approverIDs;
 
@@ -39,15 +39,23 @@ contract MediaLibrary is ERC20 {
 
 
     // Add a new media file to the smart contract
-    function registerMediaFile(string memory mediaFile, uint8 price, string memory ipfsAddress) public returns(bool) {
-        bytes32 mediaFileHash = stringToBytes32(mediaFile);
+    function registerMediaFile(string memory mediaFile, uint8 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bytes32) {
+        require(shareholders.length == shares.length, "Shareholders and shares are not of the same length");
 
-        mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false, 100, ipfsAddress);
+        bytes32 mediaId = stringToBytes32(mediaFile);
+
+        mediaLibrary[mediaId] = MediaFile(msg.sender, false, price, ipfsAddress);
+
+
+        for(uint8 i=0; i < shareholders.length; i++) {
+            Share memory s = Share(shareholders[i], shares[i]);
+            shareholderLibrary[mediaId].push(s);
+        }
 
         // The media file being uploaded, downloaded, or streamed
         numOfMediaFiles = numOfMediaFiles.add(1);
 
-        return true;
+        return mediaId;
     }
 
     //Returns the current number of media files orchestrated by the smart contract
@@ -63,7 +71,7 @@ contract MediaLibrary is ERC20 {
         if(mediaLibrary[oldFileHash].artist  == msg.sender) {
             delete mediaLibrary[oldFileHash];
 
-            mediaLibrary[newFileHash] = MediaFile(msg.sender, false, 100, ipfsArray);
+            mediaLibrary[newFileHash] = MediaFile(msg.sender, false, newPrice, ipfsArray);
         }
 
         return true;
@@ -113,7 +121,7 @@ contract MediaLibrary is ERC20 {
     }
 
     // Convert string to bytes32
-    function stringToBytes32(string memory source) private pure returns(bytes32 result) {
+    function stringToBytes32(string memory source) public pure returns(bytes32 result) {
         bytes memory tmpEmptyStringTest = bytes(source);
         if (tmpEmptyStringTest.length == 0) {
             return 0x0;

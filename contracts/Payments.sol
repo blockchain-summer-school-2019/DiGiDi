@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/payment/PullPayment.sol";
 import "./MediaLibrary.sol";
 
-contract Payments {
+contract Payments is MediaLibrary {
     using SafeMath for uint256;
 
     uint safeIndexOwed = 0;
@@ -21,7 +21,7 @@ contract Payments {
         The address is the address of the shareholders, and the money owed to them
         All values are calculated in Finney because of the insufficient decimal calculation of Solidity
     */
-    mapping (address => uint128) owed;
+    mapping (address => uint256) owed;
 
     constructor() public {
         owner = msg.sender;
@@ -29,8 +29,6 @@ contract Payments {
 
     // Payout to the msg.sender if they are owe some ether
     function requestPayment(address usr) public returns(bool) {
-        require(owed[usr] > 0, "You are not owed anything");
-
         owed[usr] = 0;
         msg.sender.transfer(owed[usr]);
 
@@ -38,21 +36,28 @@ contract Payments {
     }
 
     // Lets the msg.sender know their balance
-    function getBalance(address usr) external returns (uint128) {
-        // require(owed[msg.sender] > 0, "You are not owed anything");
+    function getBalance() internal view returns (uint256) {
+        return getUserBalance(msg.sender);
+    }
+
+    function getUserBalance(address usr) internal view returns(uint256) {
         return owed[usr];
     }
 
-
     // Whenever a MediaFile is purchased, we update the amount owed
-    function updateOwed(address shareholder, uint8 amount) external returns(bool) {
-        owed[shareholder] += amount;
-        return true;
-    }
+    function updateOwed(bytes32 mediaID) internal returns(bool) {
 
-    // Check if the user has sufficient funds
-    function enoughFunds(address usr, uint8 price) public returns(bool) {
-        //todo
+        for (uint i=safeIndexOwed; i<shareholderLibrary[mediaID].length; i++) {
+            Share memory currentShare = shareholderLibrary[mediaID][i];
+
+            // There might be some problems with the rounding and stuff
+            uint256 amountToShareholder_i = mediaLibrary[mediaID].price / currentShare.share;
+            owed[currentShare.shareholder] += amountToShareholder_i;
+
+            safeIndexOwed.add(1);
+        }
+
+        safeIndexOwed = 0;
 
         return true;
     }
