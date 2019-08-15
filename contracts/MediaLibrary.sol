@@ -33,15 +33,9 @@ contract MediaLibrary is ERC20 {
         numOfMediaFiles = 0;
     }
 
-    //Returns the current number of media files orchestrated by the smart contract
-    function getNumOfMediaFiles() public view returns(uint256) {
-        return numOfMediaFiles;
-    }
-
 
     // Add a new media file to the smart contract
     function registerMediaFile(string memory mediaFile) public returns(bool) {
-
         bytes32 mediaFileHash = stringToBytes32(mediaFile);
 
         mediaLibrary[mediaFileHash] = MediaFile(msg.sender, false, 100);
@@ -52,16 +46,18 @@ contract MediaLibrary is ERC20 {
         return true;
     }
 
+    //Returns the current number of media files orchestrated by the smart contract
+    function getNumOfMediaFiles() public view returns(uint256) {
+        return numOfMediaFiles;
+    }
 
     // Update a registered media file
     function updateMediaFile(string memory oldFile, string memory newFile) public returns(bool) {
-
         bytes32 oldFileHash = stringToBytes32(oldFile);
         bytes32 newFileHash = stringToBytes32(newFile);
 
         if(mediaLibrary[oldFileHash].artist  == msg.sender) {
             delete mediaLibrary[oldFileHash];
-
 
             mediaLibrary[newFileHash] = MediaFile(msg.sender, false, 100);
         }
@@ -71,8 +67,8 @@ contract MediaLibrary is ERC20 {
 
 
     // Remove an already registered media file from the smart contract registry
-    // ToDo: modifier owner == tx.sender
     function unregisterMediaFile(bytes32 trackId) public returns(bool) {
+        //assert(mediaLibrary[trackId].sender == tx.sender, "You are not the owner.");
 
         delete mediaLibrary[trackId];
         numOfMediaFiles = numOfMediaFiles.sub(1);
@@ -80,14 +76,13 @@ contract MediaLibrary is ERC20 {
         return true;
     }
 
-    // Request an registered media file hash and artist
-    function retrieveMediaFileArtist(string memory trackId) public view returns(address) {
 
+    // Request an registered media file hash and artist
+    function retrieveMediaFile(string memory trackId) public view returns (address, bool, uint8) {
         MediaFile memory mediaFile = mediaLibrary[stringToBytes32(trackId)];
 
-        return mediaFile.artist;
+        return (mediaFile.artist, mediaFile.approved, mediaFile.price);
     }
-
 
     // Approve a registered media file
     function approveMediaFile(bool approved, string memory trackId) public view returns(bool) {
@@ -96,6 +91,11 @@ contract MediaLibrary is ERC20 {
 
         return true;
     }
+
+
+    /**
+      Below, there are helper functions for the conversion of data types
+    */
 
     // Helper function hashing
     function createTrackId(address artist) private pure returns(bytes32) {
@@ -107,8 +107,8 @@ contract MediaLibrary is ERC20 {
 
     // Convert string to bytes32
     function stringToBytes32(string memory source) private pure returns(bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
+        bytes memory tmpEmptyStringTest = bytes(source);
+        if (tmpEmptyStringTest.length == 0) {
             return 0x0;
         }
 
