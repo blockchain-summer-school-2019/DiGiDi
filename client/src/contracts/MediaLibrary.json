@@ -4809,20 +4809,20 @@
                 {
                   "externalReferences": [
                     {
-                      "source": {
-                        "declaration": 450,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "4315:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
                       "result": {
                         "declaration": 453,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "4295:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "source": {
+                        "declaration": 450,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "4315:6:1",
                         "valueSize": 1
                       }
                     }
@@ -9656,20 +9656,20 @@
                 {
                   "externalReferences": [
                     {
-                      "source": {
-                        "declaration": 450,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "4315:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
                       "result": {
                         "declaration": 453,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "4295:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "source": {
+                        "declaration": 450,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "4315:6:1",
                         "valueSize": 1
                       }
                     }
@@ -10112,12 +10112,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x5c6605c7F10a46D74B384186d5ccABC5FF1F90CB",
-      "transactionHash": "0xd13660851ec96b5cb8e68f2a6a0b1b3d8637eda065a489c4cfb9c1978e16cadc"
+      "address": "0x35Dd1Ecb872415a43Bba6DC06b66519765eE95F9",
+      "transactionHash": "0x486743360e347263f02a95af6ea16712a6a43145928431c3b2e6b0eaf827bab8"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-08-15T19:26:45.634Z",
+  "updatedAt": "2019-08-16T07:24:27.776Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
