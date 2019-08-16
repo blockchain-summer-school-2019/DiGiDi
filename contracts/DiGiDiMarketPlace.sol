@@ -11,12 +11,11 @@ contract DiGiDiMarketPlace is Payments {
     event IPFSAddressEvent(string, bytes32);
     event GetMediaFilePriceEvent(uint256);
 
-    //ToDo: Connect to IPFS
+    //ToDo: Use real IPFS adresses
     string constant TEMPORARY_IPFS_ADDRESS = "asdadas";
 
 
     constructor() public {
-
         approverMap[msg.sender] = true;
     }
 

@@ -31,36 +31,31 @@ contract MediaLibrary is ERC20 {
     uint256 numOfMediaFiles;    // Number of media files
     address payable owner;      // Person, who deployed this smart contract
 
+
+    event MediaIDEvent(bytes32);
+
+
     constructor() public {
         owner = msg.sender;
         numOfMediaFiles = 0;
     }
 
-
-    event MediaIDEvent(bytes32);
-
-
     // Add a new media file to the smart contract
     function registerMediaFile(bytes32 mediaId, uint256 price, string memory ipfsAddress, address[] memory shareholders, uint8[] memory shares) public returns(bool) {
         require(shareholders.length == shares.length, "Shareholders and shares are not of the same length");
 
-        mediaLibrary[mediaId] = MediaFile(msg.sender, false, price, ipfsAddress);
+        mediaLibrary[mediaId] = MediaFile(tx.origin, false, price, ipfsAddress);
 
         bool artistIncluded = false;
 
         for(uint8 i=0; i < shareholders.length; i++) {
+            require(shares[i] > 0, "Shares must be bigger than zero!");
+
             Share memory s = Share(shareholders[i], shares[i]);
             shareholderLibrary[mediaId].push(s);
 
             if(shareholders[i] == msg.sender)
                 artistIncluded = true;
-        }
-
-        // If the artist is not already included in the shareholder set, add her
-        if(!artistIncluded) {
-            uint8 c = calculateRestShare();
-            Share memory s = Share(msg.sender, c);
-            shareholderLibrary[mediaId].push(s);
         }
 
         // The media file being uploaded, downloaded, or streamed
@@ -69,12 +64,6 @@ contract MediaLibrary is ERC20 {
         emit MediaIDEvent(mediaId);
 
         return true;
-    }
-
-    // ToDo:
-    function calculateRestShare() internal pure returns(uint8) {
-        uint8 x = 3;
-        return x;
     }
 
     //Returns the current number of media files orchestrated by the smart contract
@@ -97,7 +86,7 @@ contract MediaLibrary is ERC20 {
 
     // Remove an already registered media file from the smart contract registry
     function unregisterMediaFile(bytes32 trackId) public returns(bool) {
-        //assert(mediaLibrary[trackId].sender == tx.sender, "You are not the owner.");
+        require(mediaLibrary[trackId].artist == msg.sender, "You are not the owner.");
 
         delete mediaLibrary[trackId];
         numOfMediaFiles = numOfMediaFiles.sub(1);

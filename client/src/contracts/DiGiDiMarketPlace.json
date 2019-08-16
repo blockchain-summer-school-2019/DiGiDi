@@ -3695,12 +3695,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x50a8f6FdB53F67A5f136d81255DEe2CC9BA4DB45",
-      "transactionHash": "0xb20f28edf40a6de8ea5419b552d3de19765b7e7a724764f3bb95ff9cc37ed21e"
+      "address": "0xf0c448d9b57Ec322a99024116cFA12f51Ab40f67",
+      "transactionHash": "0x6f49fecc07a5226feff7ef6bc0f46367dae19431a04d54544cb47ada02a3f741"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-08-16T07:24:27.591Z",
+  "updatedAt": "2019-08-16T07:46:49.287Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

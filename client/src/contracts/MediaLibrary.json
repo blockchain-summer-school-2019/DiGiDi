@@ -10112,12 +10112,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x35Dd1Ecb872415a43Bba6DC06b66519765eE95F9",
-      "transactionHash": "0x486743360e347263f02a95af6ea16712a6a43145928431c3b2e6b0eaf827bab8"
+      "address": "0x9805d1eE23D9f5E3b1d5c46f72642fb13Cf88278",
+      "transactionHash": "0x38199cbdabff43ad34def0a1d657f7d63d9747a6a60d2000542ae1f042e2302c"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-08-16T07:24:27.776Z",
+  "updatedAt": "2019-08-16T07:46:49.454Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

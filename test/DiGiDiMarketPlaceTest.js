@@ -9,10 +9,6 @@ chai.use(require('chai-bn')(BN));
 
 contract("DiGiDiMarketPlace", accounts => {
 
-    const accountOne = accounts[0];
-    const accountTwo = accounts[1];
-    const accountThree = accounts[2];
-
     it("get the number of registered media files", async () => {
         const digidi = await MediaLibrary.new();
 
@@ -22,7 +18,7 @@ contract("DiGiDiMarketPlace", accounts => {
         let file = "my-file-as-a-string";
         let mediaId = web3.utils.sha3(file);
 
-        await digidi.registerMediaFile(mediaId, 2, "IPFS address", [accountOne, accountTwo], [3, 3]);
+        await digidi.registerMediaFile(mediaId, 2, "IPFS address", [accounts[0], accounts[1], accounts[2]], [3, 3, 3]);
 
         actualVal = await digidi.getNumOfMediaFiles();
         actualVal.should.be.a.bignumber.that.equals("1");
@@ -34,11 +30,10 @@ contract("DiGiDiMarketPlace", accounts => {
         let file = "my-file-as-a-string";
         let mediaId = web3.utils.sha3(file);
 
-        let oldBalanceAccount0 = await web3.eth.getBalance(accounts[0]);
         let oldBalanceAccount1 = await web3.eth.getBalance(accounts[1]);
         let oldBalanceAccount2 = await web3.eth.getBalance(accounts[2]);
 
-        await digidi.registerMediaFile(mediaId, web3.utils.toWei("2"), "IPFS address", [accountOne, accountTwo], [3, 3]);
+        await digidi.registerMediaFile(mediaId, web3.utils.toWei("2"), "IPFS address", [accounts[0], accounts[1], accounts[2]], [3, 3, 3]);
 
         // Add an approver
         await digidi.updateApprover(accounts[1], true);
@@ -60,8 +55,16 @@ contract("DiGiDiMarketPlace", accounts => {
 
         assert(newBalanceAccount1 > oldBalanceAccount1, "The balance was not updated for accountTwo");
         assert(newBalanceAccount2 > oldBalanceAccount2, "The balance was not updated for accountThree");
-
     });
+
+    it("Artist not included",  async () => {
+        const digidi = await DiGiDiMarketPlace.new();
+
+        let file = "my-file-as-a-string";
+        let mediaId = web3.utils.sha3(file);
+        await digidi.registerMediaFile(mediaId, web3.utils.toWei("2"), "IPFS address", [accounts[1], accounts[2]], [3, 3]);
+    });
+
 
 });
 

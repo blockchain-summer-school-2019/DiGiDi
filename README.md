@@ -12,6 +12,7 @@ Interact with your contract using in a test case:
     let digidi = await DiGiDiMarketPlace.new()
     digidi.getNumOfMediaFiles()
     
+    // Register new file
     let mediaId = web3.utils.sha3("my-file-as-a-string")
     digidi.registerMediaFile(mediaId, web3.utils.toWei("2"), "IPFS address", [accounts[1], accounts[2]], [3, 3])
     
@@ -23,14 +24,16 @@ Interact with your contract using in a test case:
     // Add approver
     digidi.updateApprover(accounts[1], true)
     
+    // Approve media file
     digidi.approveMediaFile(mediaId, true)
     digidi.requestMediaFileStream(mediaId, {value:web3.utils.toWei("3")});
     
-    // Do the pull payment
+    // The pull payment
     let oldValueAccOne = web3.eth.getBalance(accounts[1]);
     digidi.requestPayment({from:accounts[1]});
     web3.eth.getBalance(accounts[1]);
         
+    // Pull payment again...
     let oldValueAccTwo = web3.eth.getBalance(accounts[2]);
     digidi.requestPayment({from:accounts[2]});
     web3.eth.getBalance(accounts[2]);
